@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Feb  4 17:39:17 2019
+
+@author: scott
+"""
+
+#Test Case 1:
+
+balance = 999999
+annualInterestRate = 0.18
+epsilon = 0.01
+num_year = 15
+
+#Result Your Code Should Generate:
+#-------------------
+#Lowest Payment: 90325.03
+
+def optimize_payment(balance,epsilon,annualInterestRate,num_year=1):
+    """    
+    This function takes four inputs:
+    balance - The balance you currently have in dollars
+    epsilon - Needs to be a positive number and the smaller the value 
+              the higher the accuracy of the return
+    annualInterestRate - The annual interest rate for the account the 
+                         balance is in
+    num_year - The number of years you would like to pay the balance off in
+    This function prints and also returns the value for the monthly payment that will 
+    zero out your account in one year
+           """
+    Monthly_interest_rate = annualInterestRate/12.0
+    upper = (balance*(1+Monthly_interest_rate)**(12*num_year))/(12.0*num_year)
+    lower = balance/(num_year*12)
+    original_balance = balance
+    iterations = 0
+    
+    while abs(balance) >= epsilon:
+        balance = original_balance
+        unpaid = balance
+        monthly_Payment = (lower + upper)/2
+        months = num_year*12
+        for i in range(0,months,1):
+            unpaid = balance - monthly_Payment
+            balance = unpaid + Monthly_interest_rate*unpaid
+            #iterations += 1
+        if balance < 0:
+            upper = monthly_Payment
+            iterations += 1
+        else:
+            lower = monthly_Payment
+            iterations += 1
+    print('Lowest Payment: $'+str(round(monthly_Payment,2)))
+    print('It took '+str(iterations)+' iterations to calculate this solution')
+    return round(monthly_Payment,2)
